@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iALoc Widget</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    #ialoc-widget-container {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="ialoc-widget-container"></div>
+
+  <script type="text/javascript">
+    !function(e,t,i,n,s,o,c,a,d,r){
+      if(!e[n]){
+        for(;a<c.length;)s(o,c[a++]);
+        (d=t.createElement(i)).async=1;
+        d.src="https://ialoc.ro/assets/widget-v2/embed.min.js";
+        (r=t.getElementsByTagName(i)[0]).parentNode.insertBefore(d,r);
+        e[n]=o
+      }
+    }(window,document,"script","ialocEmbedWidget",
+      function(e,t){e[t]=function(){e._q.push([t,arguments])}},
+      {_q:[]},"init show hide".split(" "),0
+    );
+
+    var widgetOptions = {
+      source: 'ialoc-widget-embed',
+      locale: 'ro', // ro / en
+      embedMode: 'popup'
+    };
+
+    // Wait until script loads
+    function initWidget() {
+      if(window.ialocEmbedWidget) {
+        window.ialocEmbedWidget.init(widgetOptions);
+      } else {
+        setTimeout(initWidget, 100);
+      }
+    }
+    initWidget();
+  </script>
+</body>
+</html>
