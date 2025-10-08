@@ -1,54 +1,83 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>iALoc Widget</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-    }
-    #ialoc-widget-container {
-      width: 100%;
-      height: 100%;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iALoc Widget</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  #widget-container {
+    width: 100%;
+    max-width: 800px;
+    height: 0; /* starts collapsed */
+    overflow: hidden;
+  }
+</style>
 </head>
 <body>
-  <div id="ialoc-widget-container"></div>
+<div id="widget-container"></div>
 
-  <script type="text/javascript">
-    !function(e,t,i,n,s,o,c,a,d,r){
-      if(!e[n]){
-        for(;a<c.length;)s(o,c[a++]);
-        (d=t.createElement(i)).async=1;
-        d.src="https://ialoc.ro/assets/widget-v2/embed.min.js";
-        (r=t.getElementsByTagName(i)[0]).parentNode.insertBefore(d,r);
-        e[n]=o
-      }
-    }(window,document,"script","ialocEmbedWidget",
-      function(e,t){e[t]=function(){e._q.push([t,arguments])}},
-      {_q:[]},"init show hide".split(" "),0
-    );
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 
-    var widgetOptions = {
-      source: 'ialoc-widget-embed',
-      locale: 'ro', // ro / en
-      embedMode: 'popup'
-    };
+<!-- iALoc Widget Script -->
+<script>
+!function(e,t,i,n,s,o,c,a,d,r){
+  if(!e[n]){
+    for(;a<c.length;)s(o,c[a++]);
+    (d=t.createElement(i)).async=1;
+    d.src="https://ialoc.ro/assets/widget-v2/embed.min.js";
+    (r=t.getElementsByTagName(i)[0]).parentNode.insertBefore(d,r);
+    e[n]=o
+  }
+}(window,document,"script","ialocEmbedWidget",
+  function(e,t){e[t]=function(){e._q.push([t,arguments])}},
+  {_q:[]},"init show hide".split(" "),0
+);
 
-    // Wait until script loads
-    function initWidget() {
-      if(window.ialocEmbedWidget) {
-        window.ialocEmbedWidget.init(widgetOptions);
-      } else {
-        setTimeout(initWidget, 100);
-      }
-    }
-    initWidget();
-  </script>
+var widgetOptions = {
+  source: 'ialoc-widget-embed',
+  locale: 'ro',
+  embedMode: 'popup'
+};
+
+function initWidget() {
+  if(window.ialocEmbedWidget) {
+    window.ialocEmbedWidget.init(widgetOptions);
+    attachGSAP();
+  } else {
+    setTimeout(initWidget, 100);
+  }
+}
+
+function attachGSAP() {
+  const container = document.getElementById('widget-container');
+
+  // Animate container when widget opens
+  const originalShow = window.ialocEmbedWidget.show;
+  window.ialocEmbedWidget.show = function() {
+    gsap.to(container, { height: 600, duration: 0.5, ease: "power2.out" });
+    originalShow.apply(this, arguments);
+  }
+
+  // Animate container when widget hides
+  const originalHide = window.ialocEmbedWidget.hide;
+  window.ialocEmbedWidget.hide = function() {
+    gsap.to(container, { height: 0, duration: 0.5, ease: "power2.in" });
+    originalHide.apply(this, arguments);
+  }
+}
+
+initWidget();
+</script>
 </body>
 </html>
